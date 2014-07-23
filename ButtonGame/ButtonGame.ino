@@ -11,7 +11,7 @@ LiquidCrystal lcd(12,11,5,4,3,2);
   long startTime;
   int place;
   boolean running, starting = true;
-  int interval = 1000, score = 0, highScore[] = {0,0,0,0}, change = 10, difficulty = 0;
+  int interval = 1000, score = 0, highScore[] = {0,0,0,0,0}, change = 10, difficulty = 0;
   
   
 void setup(){
@@ -63,7 +63,7 @@ void loop(){
 
 }
 //print the startup lines
-void printSlow(String message,int interval,int x,int y){
+void printSlow(String message,int time,int x,int y){
  lcd.setCursor(x,y);
  int length = message.length();
  for(int i = 0;i < length;i++){
@@ -73,7 +73,7 @@ void printSlow(String message,int interval,int x,int y){
    y++; 
   }
   lcd.setCursor(x,y);
-  delay(200);
+  delay(time);
  }
 }
 
@@ -82,7 +82,7 @@ void readButton(){
   button2State = digitalRead(button2Pin);
   if(button1State != lastButton1){
     lastButton1 = button1State;
-    if(button1State == 0){
+    if(button1State == 0 && difficulty != 4){
      
       if(location >= 1){
       location--;
@@ -149,7 +149,7 @@ void startUp(){
    delay(1000);
    lcd.clear();
    lcd.setCursor(0,0);
-   lcd.print("<1> <2>  <3> <4>");
+   lcd.print("<1><2><3><4><5> ");
    long difficultyStart = millis();
    location = 0;
    difficulty = 0;
@@ -163,30 +163,39 @@ void startUp(){
    }
    lcd.clear();
    lcd.setCursor(0,0);
-   if(location >= 0 && location < 4){
+   if(location >= 0 && location < 3){
     change = 5;
     difficulty = 0;
     lcd.print("Easy");
     interval = 1000;
-   }else if(location >= 4 && location < 8){
+   }else if(location >= 3 && location < 6){
     change = 10;
     difficulty = 1;
     lcd.print("Medium");
     interval = 900;
-   }else if(location >= 8 && location < 12){
+   }else if(location >= 6 && location < 9){
      lcd.print("Hard");
      difficulty = 2;
     change = 15;
     interval = 800;
-   }else if(location >= 12 && location < 16){
+   }else if(location >= 9 && location < 12){
     change = 25;
     difficulty = 3;
     lcd.print("Expert");
     interval = 800;
+   }else if(location >= 12 && location < 16){
+    change = 30; 
+    difficulty = 4;
+    lcd.print("EXTREME!!");
+    interval = 800;
    }
    delay(500);
    lcd.clear();
-   printSlow(blah,200,0,0);
+   if(difficulty >= 3){
+   printSlow(blah,50,0,0);
+   }else{
+    printSlow(blah,200,0,0); 
+   }
    delay(200);
    lcd.clear();
    location = 7;
