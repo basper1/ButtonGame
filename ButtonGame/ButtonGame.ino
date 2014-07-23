@@ -11,7 +11,7 @@ LiquidCrystal lcd(12,11,5,4,3,2);
   long startTime;
   int place;
   boolean running, starting = true;
-  int interval = 1000, score = 0, highScore[] = {0,0,0,0,0}, change = 10, difficulty = 0;
+  int interval = 1000, score = 0, highScore[] = {0,0,0,0,0,0}, change = 10, difficulty = 0, unlock = 2;
   
   
 void setup(){
@@ -121,6 +121,13 @@ void lose(){
  lcd.print(highScore[difficulty]);
  running = false;
  starting = true;
+ if(unlock == 0&& highScore[2] >= 25){
+   unlock = 1;
+ }else if(unlock == 1 && highScore[3] >= 20){
+   unlock = 2;
+ }else if(unlock == 2 && highScore[4] >= 10){
+   unlock = 3;
+ }
  delay(1000);
  while(1 > 0){
    if(digitalRead(button1Pin) == 0||digitalRead(button2Pin) == 0){
@@ -149,7 +156,14 @@ void startUp(){
    delay(1000);
    lcd.clear();
    lcd.setCursor(0,0);
-   lcd.print("<1><2><3><4><5> ");
+   if(unlock==0){
+    lcd.print("<-1-><-2-><-3-> ");
+   }else if(unlock == 1){
+    lcd.print("< 1>< 2>< 3>< 4>");  
+   }else if(unlock >= 2){
+    lcd.print("<1><2><3><4><5> ");
+   }
+   
    long difficultyStart = millis();
    location = 0;
    difficulty = 0;
@@ -157,41 +171,19 @@ void startUp(){
      readButton();
      lcd.setCursor(location-17,1);
      lcd.print("                 ^                        ");
-     Serial.print(difficultyStart);
-     Serial.print(" ");
-     Serial.println(millis());
    }
+   Serial.println(location);
    lcd.clear();
-   lcd.setCursor(0,0);
-   if(location >= 0 && location < 3){
-    change = 5;
-    difficulty = 0;
-    lcd.print("Easy");
-    interval = 1000;
-   }else if(location >= 3 && location < 6){
-    change = 10;
-    difficulty = 1;
-    lcd.print("Medium");
-    interval = 900;
-   }else if(location >= 6 && location < 9){
-     lcd.print("Hard");
-     difficulty = 2;
-    change = 15;
-    interval = 800;
-   }else if(location >= 9 && location < 12){
-    change = 25;
-    difficulty = 3;
-    lcd.print("Expert");
-    interval = 800;
-   }else if(location >= 12 && location < 16){
-    change = 30; 
-    difficulty = 4;
-    lcd.print("EXTREME!!");
-    interval = 800;
-   }
+   difficultySel();
    delay(500);
    lcd.clear();
-   if(difficulty >= 3){
+   lcd.setCursor(0,0);
+   
+   delay(500);
+   lcd.clear();
+   if(difficulty >=5){
+   lcd.println("DIE");
+   }else if(difficulty >= 3){
    printSlow(blah,50,0,0);
    }else{
     printSlow(blah,200,0,0); 
@@ -200,3 +192,82 @@ void startUp(){
    lcd.clear();
    location = 7;
 }
+
+void difficultySel(){
+  if(unlock == 0){
+    if(location >= 0 && location < 5){
+      difficultyChoice(0);
+    }else if(location >= 5 && location < 10){
+      difficultyChoice(1);
+      Serial.println("BLAH");
+    }else if(location >= 10 && location < 16){
+      difficultyChoice(2);
+    }
+  }else if(unlock == 1){
+    if(location >= 0 && location < 4){
+      difficultyChoice(0);
+    }else if(location >= 4 && location < 8){
+      difficultyChoice(1);
+    }else if(location >= 8 && location < 12){
+      difficultyChoice(2);
+    }else if(location >= 12 && location < 16){
+      difficultyChoice(3);
+    }
+  }else if(unlock >= 2){
+    if(location >= 0 && location < 3){
+      difficultyChoice(0);
+    }else if(location >= 3 && location < 6){
+      difficultyChoice(1);
+    }else if(location >= 6 && location < 9){
+      difficultyChoice(2);
+    }else if(location >= 9 && location < 12){
+      difficultyChoice(3);
+    }else if(location >= 12 && location < 15){
+      difficultyChoice(4);
+    }else if(location >= 15 && location < 16){
+      if(unlock == 3){
+        difficultyChoice(5);
+      }else{
+        difficultyChoice(4);
+      }
+    }
+  }
+}
+
+void difficultyChoice(int diff){
+  Serial.println(diff);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  if(diff == 0){
+    change = 5;
+    difficulty = 0;
+    lcd.print("Easy");
+    interval = 1000;
+   }else if(diff == 1){
+    change = 10;
+    difficulty = 1;
+    lcd.print("Medium");
+    interval = 900;
+   }else if(diff == 2){
+     lcd.print("Hard");
+     difficulty = 2;
+    change = 15;
+    interval = 800;
+   }else if(diff == 3){
+    change = 25;
+    difficulty = 3;
+    lcd.print("Expert");
+    interval = 800;
+   }else if(diff == 4){
+    change = 30; 
+    difficulty = 4;
+    lcd.print("EXTREME!!");
+    interval = 800;
+   }else if(diff == 5){
+    change = 10; 
+    difficulty = 5;
+    lcd.print("Death");
+    interval = 400;
+   }
+}
+
