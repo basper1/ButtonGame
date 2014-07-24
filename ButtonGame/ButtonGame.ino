@@ -1,6 +1,5 @@
 #include <LiquidCrystal.h>
 LiquidCrystal lcd(12,11,5,4,3,2);
-  String blah = "3..2..1..GO!";
   const int button1Pin = 8;
   const int button2Pin = 9;
   boolean lastButton1 = HIGH;
@@ -11,7 +10,7 @@ LiquidCrystal lcd(12,11,5,4,3,2);
   long startTime;
   int place;
   boolean running, starting = true;
-  int interval = 1000, score = 0, highScore[] = {0,0,0,0,0,0}, change = 10, difficulty = 0, unlock = 2;
+  int interval = 1000, score = 0, highScore[] = {0,0,0,0,0,0}, change = 10, difficulty = 0, unlock = 0;
   
   
 void setup(){
@@ -182,11 +181,11 @@ void startUp(){
    delay(500);
    lcd.clear();
    if(difficulty >=5){
-   lcd.println("DIE");
+   lcd.println("GO");
    }else if(difficulty >= 3){
-   printSlow(blah,50,0,0);
+   printSlow("3..2..1..GO!",75,0,0);
    }else{
-    printSlow(blah,200,0,0); 
+    printSlow("3..2..1..GO!",200,0,0); 
    }
    delay(200);
    lcd.clear();
@@ -266,7 +265,7 @@ void difficultyChoice(int diff){
    }else if(diff == 5){
     change = 10; 
     difficulty = 5;
-    lcd.print("Death");
+    lcd.print("death");
     interval = 400;
    }
 }
